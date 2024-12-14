@@ -15,5 +15,9 @@
     "typescript": "^5.7.2",
     "vitest": "2.1.8",
     "wrangler": "^3.95.0"
+  },
+  "dependencies": {
+    "@std/encoding": "npm:@jsr/std__encoding@^1.0.5",
+    "hono": "^4.6.13"
   }
 }
