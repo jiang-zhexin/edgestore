@@ -2,7 +2,7 @@ import { encodeBase64 } from "@std/encoding"
 
 import type { MyFile, FileMetadata } from "./type"
 
-export async function Sync(env: Env, ...files: MyFile[]) {
+export async function Sync(env: Env, files: MyFile[]) {
     const { jwt, buckets } = await startUploadSession(env, files)
     const token = buckets.length > 0 ? await uploadFile(env, jwt, buckets, files) : jwt
     await uploadScript(env, token)

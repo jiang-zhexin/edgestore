@@ -11,7 +11,7 @@ app.onError((err, c) => {
         result: err,
     })
     c.status(500)
-    return c.text("Seem appear some errors")
+    return c.text("Internal Server Error")
 })
 
 app.get("*", async (c) => {
@@ -23,28 +23,25 @@ app.put(
     bodyLimit({
         maxSize: 25 * 1024 * 1024,
         onError: (c) => {
-            return c.text("Too big file", 413)
+            c.status(413)
+            return c.text("Content Too Large")
         },
     }),
     async (c) => {
-        await upload(c.env, c.executionCtx, c.req.raw)
-
-        return c.json({
-            url: `https://${c.env.host}${c.req.path}`,
-            message: "put the file success",
-        })
+        const statusCode = await upload(c.env, c.executionCtx, c.req.raw)
+        switch (statusCode) {
+            case 201:
+                c.header("Location", c.req.path)
+                return c.status(201)
+            case 204:
+                return c.status(204)
+        }
     }
 )
 
 app.delete("*", async (c) => {
-    const message = await remove(c.env, c.executionCtx, c.req.path)
-    if (message) {
-        return c.json({ message })
-    }
-    return c.json({
-        url: `https://${c.env.host}${c.req.path}`,
-        message: "delete the file success",
-    })
+    const statusCode = await remove(c.env, c.executionCtx, c.req.path)
+    return c.status(statusCode)
 })
 
 export default app
