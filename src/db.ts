@@ -8,7 +8,12 @@ export async function getFiles(env: Env): Promise<MyFile[]> {
 export function insertFiles(env: Env, ...files: MyFile[]): Promise<D1Result<never>[]> {
     return env.DB.batch<never>(
         files.map((file) =>
-            env.DB.prepare("INSERT INTO files (path, hash, size) VALUES (?1, ?2, ?3)").bind(file.path, file.hash, file.size)
+            env.DB.prepare("INSERT INTO files (path, hash, size, type) VALUES (?1, ?2, ?3, ?4)").bind(
+                file.path,
+                file.hash,
+                file.size,
+                file.type
+            )
         )
     )
 }

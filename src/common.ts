@@ -2,12 +2,16 @@ import { encodeHex } from "@std/encoding"
 
 import type { MyFile } from "./type"
 
-export async function toMyFile(path: string, data: Uint8Array): Promise<MyFile> {
+export async function toMyFile(req: Request): Promise<MyFile> {
+    const { pathname } = new URL(req.url)
+    const data = await req.bytes()
+
     return {
-        path: path,
+        path: pathname,
         data: data,
         size: data.length,
         hash: await Sha256(data),
+        type: req.headers.get("Content-Type") ?? "application/octet-stream",
     }
 }
 

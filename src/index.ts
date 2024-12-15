@@ -27,8 +27,7 @@ app.put(
         },
     }),
     async (c) => {
-        const body = await c.req.raw.bytes()
-        await upload(c.env, c.executionCtx, c.req.path, body)
+        await upload(c.env, c.executionCtx, c.req.raw)
 
         return c.json({
             url: `https://${c.env.host}${c.req.path}`,

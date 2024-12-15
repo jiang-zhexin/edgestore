@@ -53,13 +53,7 @@ async function uploadFile(env: Env, jwt: string, fileHashes: string[], files: My
         if (theFile.data === undefined) {
             throw new Error("Unexist file")
         }
-        form.append(
-            fileHash,
-            new File([encodeBase64(theFile.data)], fileHash, {
-                type: "application/octet-stream",
-            }),
-            fileHash
-        )
+        form.append(fileHash, new File([encodeBase64(theFile.data)], fileHash, { type: theFile.type }), fileHash)
     })
 
     const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/assets/upload?base64=true`, {
