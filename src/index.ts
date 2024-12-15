@@ -9,7 +9,8 @@ app.onError((err, c) => {
         event: "error",
         result: err,
     })
-    return c.text("seem appear some errors")
+    c.status(500)
+    return c.text("Seem appear some errors")
 })
 
 app.get("*", async (c) => {
@@ -22,6 +23,7 @@ app.put("*", async (c) => {
 
     return c.json({
         url: `https://${c.env.host}${c.req.path}`,
+        message: "put the file success",
     })
 })
 
@@ -29,7 +31,8 @@ app.delete("*", async (c) => {
     await remove(c.env, c.req.path)
 
     return c.json({
-        message: `delete ${c.req.path} success`,
+        url: `https://${c.env.host}${c.req.path}`,
+        message: "delete the file success",
     })
 })
 
