@@ -19,7 +19,7 @@ app.get("*", async (c) => {
 
 app.put("*", async (c) => {
     const body = await c.req.raw.bytes()
-    await upload(c.env, c.req.path, body)
+    await upload(c.env, c.executionCtx, c.req.path, body)
 
     return c.json({
         url: `https://${c.env.host}${c.req.path}`,
@@ -28,7 +28,7 @@ app.put("*", async (c) => {
 })
 
 app.delete("*", async (c) => {
-    await remove(c.env, c.req.path)
+    await remove(c.env, c.executionCtx, c.req.path)
 
     return c.json({
         url: `https://${c.env.host}${c.req.path}`,

@@ -2,22 +2,21 @@ import { toMyFile } from "./common"
 import { getFiles, insertFiles, deleteFiles } from "./db"
 import { Sync } from "./store"
 
-export async function upload(env: Env, path: string, data: Uint8Array) {
-    const newFile = await toMyFile(path, data)
-    const existFiles = await getFiles(env)
+export async function upload(env: Env, ctx: ExecutionContext, path: string, data: Uint8Array) {
+    const [newFile, existFiles] = await Promise.all([toMyFile(path, data), getFiles(env)])
 
     await Sync(env, newFile, ...existFiles)
-    await insertFiles(env, newFile)
+    ctx.waitUntil(insertFiles(env, newFile))
 }
 
-export async function remove(env: Env, path: string) {
+export async function remove(env: Env, ctx: ExecutionContext, path: string) {
     const existFiles = await getFiles(env)
-    const removeFile = existFiles.filter((f) => f.path === path)
+    const removeFiles = existFiles.filter((f) => f.path === path)
     const otherFiles = existFiles.filter((f) => f.path !== path)
 
-    if (removeFile.length < 1) {
+    if (removeFiles.length === 0) {
         return
     }
     await Sync(env, ...otherFiles)
-    await deleteFiles(env, ...removeFile)
+    ctx.waitUntil(deleteFiles(env, ...removeFiles))
 }
