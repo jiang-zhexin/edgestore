@@ -10,7 +10,7 @@ export async function Sync(env: Env, ...files: MyFile[]) {
 
 async function startUploadSession(env: Env, files: MyFile[]) {
     const fileMetadata: Record<string, FileMetadata> = {}
-    files.map(f => {
+    files.map((f) => {
         fileMetadata[f.path] = {
             hash: f.hash,
             size: f.size,
@@ -27,11 +27,11 @@ async function startUploadSession(env: Env, files: MyFile[]) {
                 "X-Auth-Email": env.email,
             },
             body: JSON.stringify({ manifest: fileMetadata }),
-        },
+        }
     )
     const result = await response.json<UploadResponse>()
     console.log({
-        event: 'assets upload session',
+        event: "assets upload session",
         result: result,
     })
     if (result.success === false) {
@@ -44,38 +44,35 @@ async function startUploadSession(env: Env, files: MyFile[]) {
 
 async function uploadFile(env: Env, jwt: string, fileHashes: string[], files: MyFile[]) {
     const fileMap: Record<string, MyFile> = {}
-    files.map(f => {
+    files.map((f) => {
         fileMap[f.hash] = f
     })
     const form = new FormData()
     fileHashes.map(async (fileHash) => {
         const theFile = fileMap[fileHash]
         if (theFile.data === undefined) {
-            throw new Error('Unexist file')
+            throw new Error("Unexist file")
         }
         form.append(
             fileHash,
             new File([encodeBase64(theFile.data)], fileHash, {
-                type: 'application/octet-stream',
+                type: "application/octet-stream",
             }),
-            fileHash,
+            fileHash
         )
     })
 
-    const response = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/assets/upload?base64=true`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${jwt}`,
-            },
-            body: form,
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/assets/upload?base64=true`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${jwt}`,
         },
-    )
+        body: form,
+    })
     const result = await response.json<UploadResponse>()
     console.log({
-        event: 'assets upload',
-        result: result
+        event: "assets upload",
+        result: result,
     })
     if (result.success === false) {
         throw new Error(result.errors[0].message)
@@ -85,25 +82,19 @@ async function uploadFile(env: Env, jwt: string, fileHashes: string[], files: My
 
 async function uploadScript(env: Env, jwt: string) {
     const form = new FormData()
-    form.append(
-        "metadata",
-        JSON.stringify({ assets: { jwt } }),
-    )
+    form.append("metadata", JSON.stringify({ assets: { jwt } }))
 
-    const response = await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/scripts/${env.script_name}`,
-        {
-            method: "PUT",
-            headers: {
-                "X-Auth-Key": env.API_TOKEN,
-                "X-Auth-Email": env.email,
-            },
-            body: form,
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/scripts/${env.script_name}`, {
+        method: "PUT",
+        headers: {
+            "X-Auth-Key": env.API_TOKEN,
+            "X-Auth-Email": env.email,
         },
-    )
+        body: form,
+    })
     console.log({
-        event: 'scripts upload',
-        result: await response.json()
+        event: "scripts upload",
+        result: await response.json(),
     })
     if (response.status != 200) {
         throw new Error("unexpected status code")
