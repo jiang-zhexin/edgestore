@@ -1,4 +1,5 @@
 import { Hono } from "hono"
+import { bodyLimit } from "hono/body-limit"
 
 import { remove, upload } from "./method"
 
@@ -17,15 +18,24 @@ app.get("*", async (c) => {
     return c.env.store.fetch(c.req.raw)
 })
 
-app.put("*", async (c) => {
-    const body = await c.req.raw.bytes()
-    await upload(c.env, c.executionCtx, c.req.path, body)
+app.put(
+    "*",
+    bodyLimit({
+        maxSize: 25 * 1024 * 1024,
+        onError: (c) => {
+            return c.text("Too big file", 413)
+        },
+    }),
+    async (c) => {
+        const body = await c.req.raw.bytes()
+        await upload(c.env, c.executionCtx, c.req.path, body)
 
-    return c.json({
-        url: `https://${c.env.host}${c.req.path}`,
-        message: "put the file success",
-    })
-})
+        return c.json({
+            url: `https://${c.env.host}${c.req.path}`,
+            message: "put the file success",
+        })
+    }
+)
 
 app.delete("*", async (c) => {
     await remove(c.env, c.executionCtx, c.req.path)
