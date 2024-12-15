@@ -11,6 +11,9 @@ importers:
       '@std/encoding':
         specifier: npm:@jsr/std__encoding@^1.0.5
         version: '@jsr/std__encoding@1.0.5'
+      '@std/media-types':
+        specifier: npm:@jsr/std__media-types@^1.1.0
+        version: '@jsr/std__media-types@1.1.0'
       hono:
         specifier: ^4.6.13
         version: 4.6.13
@@ -381,6 +384,9 @@ packages:
 
   '@jsr/std__encoding@1.0.5':
     resolution: {integrity: sha512-blLadT0G3SiwsneatWsUwH5s+Sb+zSsQCgtHZlT+nQkoFci2OiErHx4XqdoFcwuz3IH6wOdPZqjhcSrbNS0jqA==, tarball: https://npm.jsr.io/~/11/@jsr/std__encoding/1.0.5.tgz}
+
+  '@jsr/std__media-types@1.1.0':
+    resolution: {integrity: sha512-dHvaxHL7ENWnltgL653uo3KnKFse3ZbopZop2gqsT7yrscx7irZEClu5Cba7gMPPRk4Lg1FbriNcaBViM2RSBw==, tarball: https://npm.jsr.io/~/11/@jsr/std__media-types/1.1.0.tgz}
 
   '@rollup/rollup-android-arm-eabi@4.28.1':
     resolution: {integrity: sha512-2aZp8AES04KI2dy3Ss6/MDjXbwBzj+i0GqKtWXgw2/Ma6E4jJvujryO6gJAghIRVz7Vwr9Gtl/8na3nDUKpraQ==}
@@ -1122,6 +1128,8 @@ snapshots:
       '@jridgewell/sourcemap-codec': 1.5.0
 
   '@jsr/std__encoding@1.0.5': {}
+
+  '@jsr/std__media-types@1.1.0': {}
 
   '@rollup/rollup-android-arm-eabi@4.28.1':
     optional: true
