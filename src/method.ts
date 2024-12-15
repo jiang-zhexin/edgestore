@@ -15,7 +15,7 @@ export async function remove(env: Env, ctx: ExecutionContext, path: string) {
     const otherFiles = existFiles.filter((f) => f.path !== path)
 
     if (removeFiles.length === 0) {
-        return
+        return "Unexist file"
     }
     await Sync(env, ...otherFiles)
     ctx.waitUntil(deleteFiles(env, ...removeFiles))

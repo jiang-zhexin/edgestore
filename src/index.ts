@@ -37,8 +37,10 @@ app.put(
 )
 
 app.delete("*", async (c) => {
-    await remove(c.env, c.executionCtx, c.req.path)
-
+    const message = await remove(c.env, c.executionCtx, c.req.path)
+    if (message) {
+        return c.json({ message })
+    }
     return c.json({
         url: `https://${c.env.host}${c.req.path}`,
         message: "delete the file success",
