@@ -19,5 +19,5 @@ export function insertFiles(env: Env, ...files: MyFile[]): Promise<D1Result<neve
 }
 
 export function deleteFiles(env: Env, ...files: MyFile[]): Promise<D1Result<never>[]> {
-    return env.DB.batch<never>(files.map((file) => env.DB.prepare("DELETE FROM files WHERE hash = ?1").bind(file.hash)))
+    return env.DB.batch<never>(files.map((file) => env.DB.prepare("DELETE FROM files WHERE path = ?1").bind(file.path)))
 }
