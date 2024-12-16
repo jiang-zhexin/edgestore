@@ -53,15 +53,16 @@ app.delete(
     async (c) => {
         const existFiles = await getFiles(c.env)
         const removeFiles = existFiles.filter((f) => f.path === c.req.path)
-        const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
 
         if (removeFiles.length === 0) {
             return c.text("404 Not Found", 404)
         }
 
-        await Sync(c.env, syncFiles)
+        if (c.req.query("lazy") === "false") {
+            const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
+            await Sync(c.env, syncFiles)
+        }
         c.executionCtx.waitUntil(deleteFiles(c.env, ...removeFiles))
-
         return c.newResponse(null, 204)
     }
 )
