@@ -9,7 +9,7 @@ export async function toMyFile(req: Request): Promise<MyFile> {
     const [_, extname] = pathname.split(".", 2)
 
     return {
-        path: pathname,
+        path: decodeURIComponent(pathname),
         data: data,
         size: data.length,
         hash: await Sha256(data),

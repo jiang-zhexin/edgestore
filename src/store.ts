@@ -22,7 +22,7 @@ async function startUploadSession(env: Env, files: MyFile[]) {
         {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json; charset=UTF-8",
                 "X-Auth-Key": env.API_TOKEN,
                 "X-Auth-Email": env.email,
             },
@@ -76,7 +76,7 @@ async function uploadFile(env: Env, jwt: string, fileHashes: string[], files: My
 
 async function uploadScript(env: Env, jwt: string) {
     const form = new FormData()
-    form.append("metadata", JSON.stringify({ assets: { jwt } }))
+    form.append("metadata", JSON.stringify({ compatibility_date: "2024-12-05", assets: { jwt } }))
 
     const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${env.account_id}/workers/scripts/${env.script_name}`, {
         method: "PUT",
