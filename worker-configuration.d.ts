@@ -5,6 +5,7 @@ interface Env {
 	API_TOKEN: string;
 	account_id: string;
 	email: string;
+	token: string;
 	DB: D1Database;
 	store: Fetcher;
 }

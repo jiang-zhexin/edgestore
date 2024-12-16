@@ -1,4 +1,5 @@
 import { Hono } from "hono"
+import { bearerAuth } from "hono/bearer-auth"
 import { bodyLimit } from "hono/body-limit"
 
 import { toMyFile } from "./common"
@@ -18,6 +19,9 @@ app.get("*", async (c) => {
 
 app.put(
     "*",
+    bearerAuth({
+        verifyToken: (token, c) => token === c.env.token,
+    }),
     bodyLimit({
         maxSize: 25 * 1024 * 1024,
         onError: (c) => {
@@ -41,19 +45,25 @@ app.put(
     }
 )
 
-app.delete("*", async (c) => {
-    const existFiles = await getFiles(c.env)
-    const removeFiles = existFiles.filter((f) => f.path === c.req.path)
-    const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
+app.delete(
+    "*",
+    bearerAuth({
+        verifyToken: (token, c) => token === c.env.token,
+    }),
+    async (c) => {
+        const existFiles = await getFiles(c.env)
+        const removeFiles = existFiles.filter((f) => f.path === c.req.path)
+        const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
 
-    if (removeFiles.length === 0) {
-        return c.text("404 Not Found", 404)
+        if (removeFiles.length === 0) {
+            return c.text("404 Not Found", 404)
+        }
+
+        await Sync(c.env, syncFiles)
+        c.executionCtx.waitUntil(deleteFiles(c.env, ...removeFiles))
+
+        return c.newResponse(null, 204)
     }
-
-    await Sync(c.env, syncFiles)
-    c.executionCtx.waitUntil(deleteFiles(c.env, ...removeFiles))
-
-    return c.newResponse(null, 204)
-})
+)
 
 export default app
