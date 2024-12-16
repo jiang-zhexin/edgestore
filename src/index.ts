@@ -2,7 +2,7 @@ import { Hono } from "hono"
 import { bodyLimit } from "hono/body-limit"
 
 import { toMyFile } from "./common"
-import { deleteFiles, getFiles, insertFiles } from "./db"
+import { deleteFiles, getFiles, insertFiles, updateFiles } from "./db"
 import { Sync } from "./store"
 
 const app = new Hono<{ Bindings: Env }>()
@@ -29,13 +29,14 @@ app.put(
         const syncFiles = existFiles.filter((f) => f.path !== newFile.path).concat(newFile)
 
         await Sync(c.env, syncFiles)
-        c.executionCtx.waitUntil(insertFiles(c.env, newFile))
 
         c.header("Content-Location", c.req.path)
         if (syncFiles.length > existFiles.length) {
+            c.executionCtx.waitUntil(insertFiles(c.env, newFile))
             c.header("Location", c.req.path)
             return c.text("201 Created", 201)
         }
+        c.executionCtx.waitUntil(updateFiles(c.env, newFile))
         return c.newResponse(null, 204)
     }
 )
