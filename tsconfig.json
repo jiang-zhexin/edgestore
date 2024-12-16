@@ -15,7 +15,8 @@
 		"moduleResolution": "Bundler",
 		/* Specify type package names to be included without being referenced in a source file. */
 		"types": [
-			"@cloudflare/workers-types"
+			"@cloudflare/workers-types",
+			"@types/node"
 		],
 		/* Enable importing .json files */
 		"resolveJsonModule": true,

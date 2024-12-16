@@ -17,7 +17,6 @@ export default defineWorkersProject(async () => {
                     },
                     miniflare: {
                         bindings: { dbInit: migrations },
-                        compatibilityFlags: ["nodejs_compat"],
                     },
                 },
             },

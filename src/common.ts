@@ -1,5 +1,5 @@
-import { encodeHex } from "@std/encoding"
 import { contentType } from "@std/media-types"
+import { Buffer } from "node:buffer"
 
 import type { MyFile } from "./type"
 
@@ -22,5 +22,5 @@ export async function toMyFile(req: Request): Promise<MyFile> {
  */
 async function Sha256(uint8Array: Uint8Array) {
     const hashBuffer = await crypto.subtle.digest("SHA-256", uint8Array)
-    return encodeHex(hashBuffer).slice(0, 32)
+    return Buffer.from(hashBuffer).toString("hex").slice(0, 32)
 }
