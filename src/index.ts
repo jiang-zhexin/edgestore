@@ -13,9 +13,17 @@ app.onError((err, c) => {
     return c.text("500 Internal Server Error", 500)
 })
 
-app.get("*", async (c) => {
-    return c.env.store.fetch(c.req.raw)
-})
+app.get(
+    "*",
+    async (c, next) => {
+        await next()
+        c.header("cache-control", "public, max-age=86400, must-revalidate")
+    },
+    async (c) => {
+        const response = await c.env.store.fetch(c.req.raw)
+        return new Response(response.body, response)
+    }
+)
 
 app.put(
     "*",
