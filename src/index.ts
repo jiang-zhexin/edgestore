@@ -42,10 +42,10 @@ app.put(
 
         await Sync(c.env, syncFiles)
 
-        c.header("Content-Location", c.req.path)
+        c.header("Content-Location", c.req.url)
         if (syncFiles.length > existFiles.length) {
             c.executionCtx.waitUntil(insertFiles(c.env, newFile))
-            c.header("Location", c.req.path)
+            c.header("Location", c.req.url)
             return c.text("201 Created", 201)
         }
         c.executionCtx.waitUntil(updateFiles(c.env, newFile))
