@@ -1,0 +1,89 @@
+@media screen and (min-width: 768px) {
+    .action {
+        width: 80%;
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .action {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .tr {
+        color: rgb(255, 255, 255);
+    }
+
+    .tr:nth-child(odd) {
+        background: rgb(41, 41, 41);
+    }
+
+    .tr:nth-child(even) {
+        background: rgb(32, 32, 32);
+    }
+
+    @media screen and (min-width: 768px) {
+        .tr:hover {
+            background: rgb(64, 64, 64);
+        }
+
+        .action:hover {
+            background: rgb(147, 159, 197);
+        }
+    }
+
+    .action {
+        background: rgb(96, 109, 148);
+        color: rgb(255, 255, 255);
+    }
+
+    .action:active {
+        background: rgb(82, 105, 141);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .tr:nth-child(odd) {
+        background: rgb(240, 240, 240);
+    }
+
+    .tr:nth-child(even) {
+        background: rgb(249, 249, 249);
+    }
+
+    @media screen and (min-width: 768px) {
+        .tr:hover {
+            background: rgb(224, 224, 224);
+        }
+
+        .action:hover {
+            background: rgb(100, 165, 255);
+        }
+    }
+
+    .action {
+        background: rgb(135, 195, 255);
+    }
+
+    .action:active {
+        background: rgb(71, 141, 255);
+    }
+}
+
+.th {
+    padding: 10px;
+    font-weight: normal;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.action {
+    border-radius: 5px;
+    height: 100%;
+    border: none;
+    cursor: pointer;
+}

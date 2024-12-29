@@ -1,0 +1,71 @@
+.input {
+    display: none;
+}
+
+@media screen and (min-width: 768px) {
+    .table,
+    .label {
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .table,
+    .label {
+        width: 90%;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .th {
+        background: rgb(80, 85, 102);
+    }
+
+    .tr {
+        color: rgb(255, 255, 255);
+    }
+
+    .label {
+        background: rgba(20, 20, 20, 0.5);
+        border: 1px solid rgb(40, 40, 40);
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .th {
+        background: rgb(199, 209, 241);
+    }
+
+    .label {
+        background: rgba(220, 220, 220, 0.5);
+        border: 1px solid rgb(230, 230, 230);
+        border: 2px solid rgba(0, 0, 0, 0.4);
+        color: rgba(0, 0, 0, 0.4);
+    }
+}
+
+.table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.th {
+    padding: 10px 15px;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.label {
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 15px 20px;
+    cursor: pointer;
+}

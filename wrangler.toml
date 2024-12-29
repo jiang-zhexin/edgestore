@@ -27,7 +27,10 @@ database_id = "da3bcf3e-34ab-4a43-987b-01de6b7ceb65"
 script_name = "file"
 
 [assets]
-directory = "out"
+directory = "web/out"
+
+[build]
+command = "bun run build"
 
 
 [[env.dev.d1_databases]]
