@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 import { bearerAuth } from "hono/bearer-auth"
 import { bodyLimit } from "hono/body-limit"
+import { cors } from "hono/cors"
 import { createMiddleware } from "hono/factory"
 
 import { toMyFile } from "./common"
@@ -20,6 +21,11 @@ app.get(
         await next()
         c.header("cache-control", "public, max-age=86400, must-revalidate")
     },
+    cors({
+        origin: "*",
+        allowMethods: ["GET"],
+        maxAge: 86400,
+    }),
     async (c) => {
         const response = await c.env.store.fetch(c.req.raw)
         return new Response(response.body, response)
