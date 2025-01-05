@@ -1,0 +1,45 @@
+/* components/TopBar.module.css */
+
+.container {
+    position: fixed;
+    height: 30px;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    /* 确保在其他内容之上 */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* 可选：添加阴影 */
+}
+
+@media (prefers-color-scheme: light) {
+    .container {
+        background-color: #eee;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .container {
+        background-color: #222;
+        color: white;
+    }
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 8px 15px;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+}

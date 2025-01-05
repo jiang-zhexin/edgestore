@@ -4,6 +4,18 @@ compatibility_date = "2024-12-30"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
+[[d1_databases]]
+binding = "DB"
+database_name = "edgestore"
+database_id = "da3bcf3e-34ab-4a43-987b-01de6b7ceb65"
+
+[[services]]
+binding = "store"
+service = "file"
+
+[vars]
+script_name = "file"
+
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Pages Function, running it closer to your back-end infrastructure
 # rather than the end user may result in better performance.

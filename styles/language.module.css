@@ -1,0 +1,43 @@
+.action {
+    float: left;
+    padding: 5px;
+    margin: 2px;
+    height: 29px;
+    border-radius: 5px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+    .action {
+        background: rgb(96, 109, 148);
+        color: rgb(255, 255, 255);
+    }
+
+    @media screen and (min-width: 768px) {
+        .action:hover {
+            background: rgb(147, 159, 197);
+        }
+    }
+
+    .action:active {
+        background: rgb(82, 105, 141);
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .action {
+        background: rgb(135, 195, 255);
+    }
+
+    @media screen and (min-width: 768px) {
+        .action:hover {
+            background: rgb(100, 165, 255);
+        }
+    }
+
+    .action:active {
+        background: rgb(71, 141, 255);
+    }
+}
