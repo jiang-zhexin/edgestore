@@ -1,8 +1,8 @@
 import { getRequestContext } from "@cloudflare/next-on-pages"
 
-import { toMyFile } from "./common"
-import { deleteFiles, getFiles, insertFiles, updateFiles } from "./db"
-import { Sync } from "./store"
+import { toMyFile } from "@/utils/common"
+import { deleteFiles, getFiles, insertFiles, updateFiles } from "@/utils/db"
+import { Sync } from "@/utils/store"
 
 export const runtime = "edge"
 
