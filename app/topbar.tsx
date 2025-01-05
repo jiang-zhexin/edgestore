@@ -17,5 +17,3 @@ export default function TopBar() {
         </header>
     )
 }
-
-export const runtime = "edge"

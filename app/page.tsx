@@ -29,5 +29,3 @@ function Page() {
 export default dynamic(() => Promise.resolve(Page), {
     ssr: false,
 })
-
-export const runtime = "edge"

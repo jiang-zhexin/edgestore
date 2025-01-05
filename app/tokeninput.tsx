@@ -22,5 +22,3 @@ export default function TokenInput() {
         </>
     )
 }
-
-export const runtime = "edge"

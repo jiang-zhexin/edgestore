@@ -86,5 +86,3 @@ export default function FileInput() {
         </>
     )
 }
-
-export const runtime = "edge"

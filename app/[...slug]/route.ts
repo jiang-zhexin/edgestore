@@ -1,10 +1,10 @@
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getRequestContext } from "@cloudflare/next-on-pages"
 
 import { toMyFile } from "./common"
 import { deleteFiles, getFiles, insertFiles, updateFiles } from "./db"
 import { Sync } from "./store"
 
-export const runtime = 'edge'
+export const runtime = "edge"
 
 export async function GET(req: Request) {
     const { env } = getRequestContext()
@@ -34,13 +34,13 @@ export async function PUT(req: Request) {
         header.set("Location", `${url.protocol}//${url.host}${url.pathname}`)
         return new Response("201 Created", {
             status: 201,
-            headers: header
+            headers: header,
         })
     }
     ctx.waitUntil(updateFiles(env, newFile))
     return new Response(null, {
         status: 204,
-        headers: header
+        headers: header,
     })
 }
 

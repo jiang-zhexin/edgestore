@@ -118,5 +118,3 @@ export const FileList = ({ file }: { file: File }) => {
         </tr>
     )
 }
-
-export const runtime = "edge"
