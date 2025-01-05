@@ -25,11 +25,13 @@ export async function PUT(req: Request) {
 
     await Sync(env, syncFiles)
 
+    const url = new URL(req.url)
+
     const header = new Headers()
-    header.set("Content-Location", req.url)
+    header.set("Content-Location", `${url.protocol}//${url.host}${url.pathname}`)
     if (syncFiles.length > existFiles.length) {
         ctx.waitUntil(insertFiles(env, newFile))
-        header.set("Location", req.url)
+        header.set("Location", `${url.protocol}//${url.host}${url.pathname}`)
         return new Response("201 Created", {
             status: 201,
             headers: header
@@ -49,7 +51,9 @@ export async function DELETE(req: Request) {
         return new Response("Forbidden", { status: 403 })
     }
 
-    const { pathname, searchParams } = new URL(req.url)
+    const url = new URL(req.url)
+    const pathname = decodeURIComponent(url.pathname)
+    const searchParams = url.searchParams
 
     const existFiles = await getFiles(env)
     const removeFiles = existFiles.filter((f) => f.path === pathname)
