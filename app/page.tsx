@@ -23,8 +23,8 @@ function Page() {
                     <SetWordContext value={setLanguage}>
                         <TopBar />
                     </SetWordContext>
+                    <FileInput />
                 </TokenContext>
-                <FileInput />
             </WordContext>
         </>
     )
