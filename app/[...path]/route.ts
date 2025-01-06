@@ -44,6 +44,18 @@ const BearerAuthMiddleware = createMiddleware(
     })
 )
 
+app.post("/list", BearerAuthMiddleware, async (c) => {
+    const existFiles = await getFiles()
+    return c.json(
+        existFiles.map((f) => {
+            return {
+                name: f.path.slice(f.path.lastIndexOf("/") + 1),
+                size: f.size,
+            }
+        })
+    )
+})
+
 app.put(
     "*",
     BearerAuthMiddleware,
@@ -94,5 +106,6 @@ app.delete("*", BearerAuthMiddleware, async (c) => {
 })
 
 export const GET = handle(app)
+export const POST = handle(app)
 export const PUT = handle(app)
 export const DELETE = handle(app)

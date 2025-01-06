@@ -8,24 +8,12 @@ import { fileStatus } from "@/locales/type"
 
 import styles from "@/styles/filelist.module.css"
 import { TokenContext } from "./token"
+import { myFile, statusMap } from "./type"
 
-const statusMap: {
-    [K in keyof fileStatus]: K
-} = {
-    tooBig: "tooBig",
-    notUploaded: "notUploaded",
-    uploading: "uploading",
-    uploadFail: "uploadFail",
-    uploaded: "uploaded",
-    deleting: "deleting",
-    deleteFail: "deleteFail",
-    deleted: "deleted",
-}
-
-export const FileList = ({ file }: { file: File }) => {
+export const FileList = ({ file }: { file: myFile }) => {
     const token = useContext(TokenContext)
     const word = useContext(WordContext)
-    const [status, setStatus] = useState<keyof fileStatus>(file.size < 25 * 1024 * 1024 ? statusMap.notUploaded : statusMap.tooBig)
+    const [status, setStatus] = useState<keyof fileStatus>(file.status)
 
     let link: string | null = null
 
@@ -39,9 +27,9 @@ export const FileList = ({ file }: { file: File }) => {
                         className={styles.action}
                         onClick={async () => {
                             setStatus(statusMap.uploading)
-                            const resp = await fetch(`/${file.name}`, {
+                            const resp = await fetch(`/${file.file.name}`, {
                                 method: "PUT",
-                                body: file,
+                                body: file.file,
                                 headers: {
                                     Authorization: `Bearer ${token.value}`,
                                 },
@@ -69,7 +57,7 @@ export const FileList = ({ file }: { file: File }) => {
                         className={styles.action}
                         onClick={async () => {
                             setStatus(statusMap.deleting)
-                            const resp = await fetch(`/${file.name}`, {
+                            const resp = await fetch(`/${file.file.name}`, {
                                 method: "DELETE",
                                 headers: {
                                     Authorization: `Bearer ${token.value}`,
@@ -102,11 +90,11 @@ export const FileList = ({ file }: { file: File }) => {
                             link ? navigator.clipboard.writeText(link) : alert("Server return a bad response")
                         }}
                     >
-                        {file.name}
+                        {file.file.name}
                     </u>
                 )
         }
-        return <>{file.name}</>
+        return <>{file.file.name}</>
     }
 
     return (
@@ -114,7 +102,7 @@ export const FileList = ({ file }: { file: File }) => {
             <th className={styles.th}>
                 <Url />
             </th>
-            <th className={styles.th}>{filesize(file.size)}</th>
+            <th className={styles.th}>{filesize(file.file.size)}</th>
             <th className={styles.th}>{word.fileStatus[status]}</th>
             <th className={styles.th}>
                 <Action />

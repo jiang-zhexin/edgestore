@@ -2,24 +2,54 @@
 
 import { filesize } from "filesize"
 
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 
 import { WordContext } from "@/locales/locale"
 import { FileList } from "./filelist"
-import type { myFiles } from "./type"
+import { statusMap, type myFiles } from "./type"
 
 import styles from "@/styles/table.module.css"
+import { TokenContext } from "./token"
 
 export default function FileInput() {
     const word = useContext(WordContext)
+    const token = useContext(TokenContext)
+
     const [myFiles, setMyFiles] = useState<myFiles>({
         files: [],
         count: 0,
         total: 0,
     })
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const resp = await fetch("/list", {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token.value}`,
+                },
+            })
+            if (resp.status === 200) {
+                const result = await resp.json<File[]>()
+                let total = 0
+                const files = result.map((f) => {
+                    total += f.size
+                    return {
+                        file: f,
+                        status: statusMap.uploaded,
+                    }
+                })
+                setMyFiles({
+                    files,
+                    count: files.length,
+                    total,
+                })
+            }
+        }
+        fetchData()
+    }, [])
+
     const Table = () => {
-        const word = useContext(WordContext)
         const { files, count, total } = myFiles
         if (count > 0)
             return (
@@ -69,12 +99,13 @@ export default function FileInput() {
                 id={inputId}
                 onChange={(e) => {
                     let total = 0
+                    const files = Array.from(e.target.files ?? []).map((file) => {
+                        total += file.size
+                        return { file: file, status: file.size < 25 * 1024 * 1024 ? statusMap.notUploaded : statusMap.tooBig }
+                    })
                     setMyFiles({
-                        files: Array.from(e.target.files ?? []).map((file) => {
-                            total += file.size
-                            return file
-                        }),
-                        count: e.target.files?.length ?? 0,
+                        files,
+                        count: files.length,
                         total: total,
                     })
                 }}
