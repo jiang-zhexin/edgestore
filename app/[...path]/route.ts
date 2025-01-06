@@ -10,6 +10,7 @@ import { getRequestContext } from "@cloudflare/next-on-pages"
 import { toMyFile } from "@/utils/common"
 import { deleteFiles, getFiles, insertFiles, updateFiles } from "@/utils/db"
 import { Sync } from "@/utils/store"
+import { url } from "inspector"
 
 export const runtime = "edge"
 
@@ -61,10 +62,13 @@ app.put(
 
         await Sync(env, syncFiles)
 
-        c.header("Content-Location", c.req.url)
+        const url = new URL(c.req.url)
+        url.search = ""
+
+        c.header("Content-Location", url.toString())
         if (syncFiles.length > existFiles.length) {
             ctx.waitUntil(insertFiles(env, newFile))
-            c.header("Location", c.req.url)
+            c.header("Location", url.toString())
             return c.text("201 Created", 201)
         }
         ctx.waitUntil(updateFiles(env, newFile))
