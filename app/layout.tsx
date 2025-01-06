@@ -1,6 +1,6 @@
 "use client"
 
-import "./globals.css"
+import "./global.css"
 import styles from "@/styles/layout.module.css"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
