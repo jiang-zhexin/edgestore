@@ -15,6 +15,11 @@ export const runtime = "edge"
 
 const app = new Hono()
 
+app.onError((err, c) => {
+    console.error(err)
+    return c.text("500 Internal Server Error", 500)
+})
+
 app.get(
     "*",
     async (c, next) => {
