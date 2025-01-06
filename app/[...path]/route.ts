@@ -13,6 +13,7 @@ export async function GET(req: Request) {
     const resp = new Response(response.body, response)
     resp.headers.set("Access-Control-Allow-Origin", "*")
     resp.headers.set("Access-Control-Allow-Methods", "GET")
+    resp.headers.set("Cache-Control", "public,max-age=604800,immutable")
     return resp
 }
 
