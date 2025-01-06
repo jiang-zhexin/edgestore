@@ -10,7 +10,6 @@ import { getRequestContext } from "@cloudflare/next-on-pages"
 import { toMyFile } from "@/utils/common"
 import { deleteFiles, getFiles, insertFiles, updateFiles } from "@/utils/db"
 import { Sync } from "@/utils/store"
-import { url } from "inspector"
 
 export const runtime = "edge"
 
@@ -55,31 +54,31 @@ app.put(
         },
     }),
     async (c) => {
-        const { env, ctx } = getRequestContext()
+        const { ctx } = getRequestContext()
 
-        const [newFile, existFiles] = await Promise.all([toMyFile(c.req.raw), getFiles(env)])
+        const [newFile, existFiles] = await Promise.all([toMyFile(c.req.raw), getFiles()])
         const syncFiles = existFiles.filter((f) => f.path !== newFile.path).concat(newFile)
 
-        await Sync(env, syncFiles)
+        await Sync(syncFiles)
 
         const url = new URL(c.req.url)
         url.search = ""
 
         c.header("Content-Location", url.toString())
         if (syncFiles.length > existFiles.length) {
-            ctx.waitUntil(insertFiles(env, newFile))
+            ctx.waitUntil(insertFiles(newFile))
             c.header("Location", url.toString())
             return c.text("201 Created", 201)
         }
-        ctx.waitUntil(updateFiles(env, newFile))
+        ctx.waitUntil(updateFiles(newFile))
         return c.newResponse(null, 204)
     }
 )
 
 app.delete("*", BearerAuthMiddleware, async (c) => {
-    const { env, ctx } = getRequestContext()
+    const { ctx } = getRequestContext()
 
-    const existFiles = await getFiles(env)
+    const existFiles = await getFiles()
     const removeFiles = existFiles.filter((f) => f.path === c.req.path)
 
     if (removeFiles.length === 0) {
@@ -88,9 +87,9 @@ app.delete("*", BearerAuthMiddleware, async (c) => {
 
     if (c.req.query("lazy") === "false") {
         const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
-        await Sync(env, syncFiles)
+        await Sync(syncFiles)
     }
-    ctx.waitUntil(deleteFiles(env, ...removeFiles))
+    ctx.waitUntil(deleteFiles(...removeFiles))
     return c.newResponse(null, 204)
 })
 

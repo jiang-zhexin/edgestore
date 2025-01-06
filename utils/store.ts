@@ -1,14 +1,18 @@
+import { getRequestContext } from "@cloudflare/next-on-pages"
+
 import { Buffer } from "node:buffer"
 
 import type { MyFile, FileMetadata } from "./type"
 
-export async function Sync(env: CloudflareEnv, files: MyFile[]) {
-    const { jwt, buckets } = await startUploadSession(env, files)
-    const token = buckets.length > 0 ? await uploadFile(env, jwt, buckets, files) : jwt
-    await uploadScript(env, token)
+export async function Sync(files: MyFile[]) {
+    const { jwt, buckets } = await startUploadSession(files)
+    const token = buckets.length > 0 ? await uploadFile(jwt, buckets, files) : jwt
+    await uploadScript(token)
 }
 
-async function startUploadSession(env: CloudflareEnv, files: MyFile[]) {
+async function startUploadSession(files: MyFile[]) {
+    const { env } = getRequestContext()
+
     const fileMetadata: Record<string, FileMetadata> = {}
     files.map((f) => {
         fileMetadata[f.path] = {
@@ -42,7 +46,9 @@ async function startUploadSession(env: CloudflareEnv, files: MyFile[]) {
     return { jwt, buckets }
 }
 
-async function uploadFile(env: CloudflareEnv, jwt: string, fileHashes: string[], files: MyFile[]) {
+async function uploadFile(jwt: string, fileHashes: string[], files: MyFile[]) {
+    const { env } = getRequestContext()
+
     const fileMap: Record<string, MyFile> = {}
     files.map((f) => {
         fileMap[f.hash] = f
@@ -74,7 +80,9 @@ async function uploadFile(env: CloudflareEnv, jwt: string, fileHashes: string[],
     return result.result.jwt
 }
 
-async function uploadScript(env: CloudflareEnv, jwt: string) {
+async function uploadScript(jwt: string) {
+    const { env } = getRequestContext()
+
     const form = new FormData()
     form.append("metadata", JSON.stringify({ compatibility_date: "2024-12-05", assets: { jwt } }))
 
