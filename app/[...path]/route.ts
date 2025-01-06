@@ -10,7 +10,10 @@ export async function GET(req: Request) {
     const { env } = getRequestContext()
 
     const response = await env.store.fetch(req.url)
-    return new Response(response.body, response)
+    const resp = new Response(response.body, response)
+    resp.headers.set("Access-Control-Allow-Origin", "*")
+    resp.headers.set("Access-Control-Allow-Methods", "GET")
+    return resp
 }
 
 export async function PUT(req: Request) {
