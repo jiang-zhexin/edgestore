@@ -31,12 +31,12 @@ export const FileList = ({ file }: { file: myFile }) => {
                                 method: "PUT",
                                 body: file.file,
                                 headers: {
-                                    Authorization: `Bearer ${token.value}`,
+                                    Authorization: `Bearer ${token.current.value}`,
                                 },
                             })
                             if (resp.status !== 201 && resp.status !== 204) {
                                 setStatus(statusMap.uploadFail)
-                                token.effect = false
+                                token.current.effect = false
                                 localStorage.setItem("tokenEffect", "false")
                                 console.log(resp.status)
                                 return
@@ -60,12 +60,12 @@ export const FileList = ({ file }: { file: myFile }) => {
                             const resp = await fetch(`/${file.file.name}`, {
                                 method: "DELETE",
                                 headers: {
-                                    Authorization: `Bearer ${token.value}`,
+                                    Authorization: `Bearer ${token.current.value}`,
                                 },
                             })
                             if (resp.status !== 404 && resp.status !== 204) {
                                 setStatus(statusMap.deleteFail)
-                                token.effect = false
+                                token.current.effect = false
                                 localStorage.setItem("tokenEffect", "false")
                                 console.log(resp.status)
                                 return

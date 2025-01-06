@@ -26,7 +26,7 @@ export default function FileInput() {
             const resp = await fetch("/list", {
                 method: "POST",
                 headers: {
-                    Authorization: `Bearer ${token.value}`,
+                    Authorization: `Bearer ${token.current.value}`,
                 },
             })
             if (resp.status === 200) {

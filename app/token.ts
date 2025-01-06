@@ -1,6 +1,13 @@
-import { createContext } from "react"
+import { createContext, RefObject } from "react"
 
-export const TokenContext = createContext({
-    value: "",
-    effect: false,
+export const TokenContext = createContext<
+    RefObject<{
+        value: string
+        effect: boolean
+    }>
+>({
+    current: {
+        value: "",
+        effect: false,
+    },
 })
