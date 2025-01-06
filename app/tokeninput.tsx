@@ -12,11 +12,12 @@ export default function TokenInput() {
         <>
             <input
                 className={styles.input}
-                placeholder={token.current ? word.token.exist : word.token.notExist}
+                placeholder={token.value ? (token.effect ? word.token.exist : word.token.invalid) : word.token.notExist}
                 type="password"
                 onChange={(e) => {
                     localStorage.setItem("token", e.target.value)
-                    token.current = e.target.value
+                    localStorage.setItem("tokenEffect", "true")
+                    token.value = e.target.value
                 }}
             />
         </>

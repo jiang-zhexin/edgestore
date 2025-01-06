@@ -29,5 +29,6 @@ export const zh_cn: wordList = {
     token: {
         exist: "你的 token 已被保存",
         notExist: "输入你的 token",
+        invalid: "你当前的 token 似乎无效",
     },
 }

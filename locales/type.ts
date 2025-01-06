@@ -15,6 +15,7 @@ export type wordList = {
     token: {
         exist: string
         notExist: string
+        invalid: string
     }
 }
 

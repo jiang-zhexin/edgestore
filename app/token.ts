@@ -1,3 +1,6 @@
-import { createContext, RefObject } from "react"
+import { createContext } from "react"
 
-export const TokenContext = createContext<RefObject<string>>({} as RefObject<string>)
+export const TokenContext = createContext({
+    value: "",
+    effect: false,
+})

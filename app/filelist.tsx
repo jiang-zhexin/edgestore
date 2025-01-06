@@ -1,7 +1,7 @@
 "use client"
 
 import { filesize } from "filesize"
-import { useContext, useRef, useState } from "react"
+import { useContext, useState } from "react"
 
 import { WordContext } from "@/locales/locale"
 import { fileStatus } from "@/locales/type"
@@ -27,7 +27,7 @@ export const FileList = ({ file }: { file: File }) => {
     const word = useContext(WordContext)
     const [status, setStatus] = useState<keyof fileStatus>(file.size < 25 * 1024 * 1024 ? statusMap.notUploaded : statusMap.tooBig)
 
-    const link = useRef("")
+    let link: string | null = null
 
     const Action = () => {
         switch (status) {
@@ -43,15 +43,17 @@ export const FileList = ({ file }: { file: File }) => {
                                 method: "PUT",
                                 body: file,
                                 headers: {
-                                    Authorization: `Bearer ${token.current}`,
+                                    Authorization: `Bearer ${token.value}`,
                                 },
                             })
                             if (resp.status !== 201 && resp.status !== 204) {
                                 setStatus(statusMap.uploadFail)
+                                token.effect = false
+                                localStorage.setItem("tokenEffect", "false")
                                 console.log(resp.status)
                                 return
                             }
-                            link.current = resp.headers.get("Content-Location") as string
+                            link = resp.headers.get("Content-Location")
                             setStatus(statusMap.uploaded)
                         }}
                         disabled={status === statusMap.uploading}
@@ -70,11 +72,13 @@ export const FileList = ({ file }: { file: File }) => {
                             const resp = await fetch(`/${file.name}`, {
                                 method: "DELETE",
                                 headers: {
-                                    Authorization: `Bearer ${token.current}`,
+                                    Authorization: `Bearer ${token.value}`,
                                 },
                             })
                             if (resp.status !== 404 && resp.status !== 204) {
                                 setStatus(statusMap.deleteFail)
+                                token.effect = false
+                                localStorage.setItem("tokenEffect", "false")
                                 console.log(resp.status)
                                 return
                             }
@@ -95,7 +99,7 @@ export const FileList = ({ file }: { file: File }) => {
                 return (
                     <u
                         onClick={() => {
-                            navigator.clipboard.writeText(link.current)
+                            link ? navigator.clipboard.writeText(link) : alert("Server return a bad response")
                         }}
                     >
                         {file.name}

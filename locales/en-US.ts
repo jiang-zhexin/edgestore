@@ -29,5 +29,6 @@ export const en_us: wordList = {
     token: {
         exist: "Your token has been saved",
         notExist: "Input your token",
+        invalid: "Your current token is invalid",
     },
 }
