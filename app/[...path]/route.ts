@@ -1,4 +1,9 @@
-import { getRequestContext } from "@cloudflare/next-on-pages"
+import { Hono } from "hono"
+import { bearerAuth } from "hono/bearer-auth"
+import { bodyLimit } from "hono/body-limit"
+import { cors } from "hono/cors"
+import { createMiddleware } from "hono/factory"
+import { handle } from "hono/vercel"
 
 import { toMyFile } from "@/utils/common"
 import { deleteFiles, getFiles, insertFiles, updateFiles } from "@/utils/db"
@@ -6,70 +11,77 @@ import { Sync } from "@/utils/store"
 
 export const runtime = "edge"
 
-export async function GET(req: Request) {
-    const { env } = getRequestContext()
+const app = new Hono<{ Bindings: CloudflareEnv }>()
 
-    const response = await env.store.fetch(req.url)
-    const resp = new Response(response.body, response)
-    resp.headers.set("Access-Control-Allow-Origin", "*")
-    resp.headers.set("Access-Control-Allow-Methods", "GET")
-    resp.headers.set("Cache-Control", "public,max-age=604800,immutable")
-    return resp
-}
-
-export async function PUT(req: Request) {
-    const { env, ctx } = getRequestContext()
-
-    if (req.headers.get("Authorization") !== `Bearer ${env.token}`) {
-        return new Response("Forbidden", { status: 403 })
+app.get(
+    "*",
+    async (c, next) => {
+        await next()
+        c.header("cache-control", "public, max-age=604800, immutable")
+    },
+    cors({
+        origin: "*",
+        allowMethods: ["GET"],
+        maxAge: 604800,
+    }),
+    async (c) => {
+        const response = await c.env.store.fetch(c.req.raw)
+        return new Response(response.body, response)
     }
+)
 
-    const [newFile, existFiles] = await Promise.all([toMyFile(req), getFiles(env)])
-    const syncFiles = existFiles.filter((f) => f.path !== newFile.path).concat(newFile)
-
-    await Sync(env, syncFiles)
-
-    const url = new URL(req.url)
-
-    const header = new Headers()
-    header.set("Content-Location", `${url.protocol}//${url.host}${url.pathname}`)
-    if (syncFiles.length > existFiles.length) {
-        ctx.waitUntil(insertFiles(env, newFile))
-        header.set("Location", `${url.protocol}//${url.host}${url.pathname}`)
-        return new Response("201 Created", {
-            status: 201,
-            headers: header,
-        })
-    }
-    ctx.waitUntil(updateFiles(env, newFile))
-    return new Response(null, {
-        status: 204,
-        headers: header,
+const BearerAuthMiddleware = createMiddleware(
+    bearerAuth({
+        realm: "Your Token",
+        verifyToken: (token, c) => token === c.env.token,
+        noAuthenticationHeaderMessage: (c) => c.text("401 Unauthorized", 401),
+        invalidAuthenticationHeaderMessage: (c) => c.text("401 Unauthorized", 401),
+        invalidTokenMessage: (c) => c.text("403 Forbidden", 403),
     })
-}
+)
 
-export async function DELETE(req: Request) {
-    const { env, ctx } = getRequestContext()
+app.put(
+    "*",
+    BearerAuthMiddleware,
+    bodyLimit({
+        maxSize: 25 * 1024 * 1024,
+        onError: (c) => {
+            return c.text("413 Content Too Large", 413)
+        },
+    }),
+    async (c) => {
+        const [newFile, existFiles] = await Promise.all([toMyFile(c.req.raw), getFiles(c.env)])
+        const syncFiles = existFiles.filter((f) => f.path !== newFile.path).concat(newFile)
 
-    if (req.headers.get("Authorization") !== `Bearer ${env.token}`) {
-        return new Response("Forbidden", { status: 403 })
+        await Sync(c.env, syncFiles)
+
+        c.header("Content-Location", c.req.url)
+        if (syncFiles.length > existFiles.length) {
+            c.executionCtx.waitUntil(insertFiles(c.env, newFile))
+            c.header("Location", c.req.url)
+            return c.text("201 Created", 201)
+        }
+        c.executionCtx.waitUntil(updateFiles(c.env, newFile))
+        return c.newResponse(null, 204)
     }
+)
 
-    const url = new URL(req.url)
-    const pathname = decodeURIComponent(url.pathname)
-    const searchParams = url.searchParams
-
-    const existFiles = await getFiles(env)
-    const removeFiles = existFiles.filter((f) => f.path === pathname)
+app.delete("*", BearerAuthMiddleware, async (c) => {
+    const existFiles = await getFiles(c.env)
+    const removeFiles = existFiles.filter((f) => f.path === c.req.path)
 
     if (removeFiles.length === 0) {
-        return new Response("404 Not Found", { status: 404 })
+        return c.text("404 Not Found", 404)
     }
 
-    if (searchParams.get("lazy") === "false") {
-        const syncFiles = existFiles.filter((f) => f.path !== pathname)
-        await Sync(env, syncFiles)
+    if (c.req.query("lazy") === "false") {
+        const syncFiles = existFiles.filter((f) => f.path !== c.req.path)
+        await Sync(c.env, syncFiles)
     }
-    ctx.waitUntil(deleteFiles(env, ...removeFiles))
-    return new Response(null, { status: 204 })
-}
+    c.executionCtx.waitUntil(deleteFiles(c.env, ...removeFiles))
+    return c.newResponse(null, 204)
+})
+
+export const GET = handle(app)
+export const PUT = handle(app)
+export const DELETE = handle(app)
