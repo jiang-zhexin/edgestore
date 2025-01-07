@@ -6,7 +6,7 @@ import { useContext, useEffect, useState } from "react"
 
 import { WordContext } from "@/locales/locale"
 import { FileList } from "./filelist"
-import { statusMap, type myFiles } from "./type"
+import { myFile, statusMap, type myFiles } from "./type"
 
 import styles from "@/styles/table.module.css"
 import { TokenContext } from "./token"
@@ -32,13 +32,20 @@ export default function FileInput() {
             if (resp.status === 200) {
                 const result = await resp.json<File[]>()
                 let total = 0
-                const files = result.map((f) => {
-                    total += f.size
-                    return {
-                        file: f,
-                        status: statusMap.uploaded,
-                    }
-                })
+                const files = myFiles.files
+                    .map((f) => {
+                        total += f.file.size
+                        return f
+                    })
+                    .concat(
+                        result.map((f) => {
+                            total += f.size
+                            return {
+                                file: f,
+                                status: statusMap.uploaded,
+                            }
+                        })
+                    )
                 setMyFiles({
                     files,
                     count: files.length,
@@ -99,10 +106,23 @@ export default function FileInput() {
                 id={inputId}
                 onChange={(e) => {
                     let total = 0
-                    const files = Array.from(e.target.files ?? []).map((file) => {
-                        total += file.size
-                        return { file: file, status: file.size < 25 * 1024 * 1024 ? statusMap.notUploaded : statusMap.tooBig }
-                    })
+                    const files: myFile[] = myFiles.files
+                        .filter((mf) => {
+                            switch (mf.status) {
+                                case statusMap.uploaded:
+                                case statusMap.deleteFail:
+                                    total += mf.file.size
+                                    return true
+                                default:
+                                    return false
+                            }
+                        })
+                        .concat(
+                            Array.from(e.target.files ?? []).map((file) => {
+                                total += file.size
+                                return { file: file, status: file.size < 25 * 1024 * 1024 ? statusMap.notUploaded : statusMap.tooBig }
+                            })
+                        )
                     setMyFiles({
                         files,
                         count: files.length,
