@@ -79,7 +79,7 @@ export default function FileInput() {
                     </thead>
                     <tbody>
                         {files.map((myFile, index) => (
-                            <FileList key={index} file={myFile} />
+                            <FileList key={index} mf={myFile} />
                         ))}
                     </tbody>
                     <tfoot>
