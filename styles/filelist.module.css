@@ -87,3 +87,7 @@
     border: none;
     cursor: pointer;
 }
+
+.u:hover {
+    cursor: pointer;
+}

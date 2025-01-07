@@ -86,6 +86,7 @@ export const FileList = ({ file }: { file: myFile }) => {
             case statusMap.deleteFail:
                 return (
                     <u
+                        className={styles.u}
                         onClick={() => {
                             link ? navigator.clipboard.writeText(link) : alert("Server return a bad response")
                         }}
