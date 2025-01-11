@@ -20,14 +20,7 @@ export type wordList = {
 }
 
 export type fileStatus = {
-    tooBig: string
-    notUploaded: string
-    uploading: string
-    uploadFail: string
-    uploaded: string
-    deleting: string
-    deleteFail: string
-    deleted: string
+    [K in keyof typeof statusMap]: string
 }
 
 export type action = {
@@ -36,3 +29,14 @@ export type action = {
 }
 
 export type locales = { [language: string]: wordList }
+
+export enum statusMap {
+    tooBig,
+    notUploaded,
+    uploading,
+    uploadFail,
+    uploaded,
+    deleting,
+    deleteFail,
+    deleted,
+}

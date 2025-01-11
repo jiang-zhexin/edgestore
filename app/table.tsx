@@ -6,7 +6,8 @@ import { useContext, useEffect, useState } from "react"
 
 import { WordContext } from "@/locales/locale"
 import { FileList } from "./filelist"
-import { myFile, statusMap, type myFiles } from "./type"
+import type { myFile, myFiles } from "./type"
+import { statusMap } from "@/locales/type"
 
 import styles from "@/styles/table.module.css"
 import { TokenContext } from "./token"

@@ -4,16 +4,16 @@ import { filesize } from "filesize"
 import { useContext, useState } from "react"
 
 import { WordContext } from "@/locales/locale"
-import { fileStatus } from "@/locales/type"
+import { statusMap } from "@/locales/type"
 
 import styles from "@/styles/filelist.module.css"
 import { TokenContext } from "./token"
-import { myFile, statusMap } from "./type"
+import { myFile } from "./type"
 
 export const FileList = ({ mf }: { mf: myFile }) => {
     const token = useContext(TokenContext)
     const word = useContext(WordContext)
-    const [status, setStatus] = useState<keyof fileStatus>(mf.status)
+    const [status, setStatus] = useState(mf.status)
 
     let link: string | null = mf.status === statusMap.uploaded ? `${location.protocol}//${location.host}/${mf.file.name}` : null
 
