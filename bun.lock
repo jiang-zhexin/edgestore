@@ -6,19 +6,19 @@
       "dependencies": {
         "@std/media-types": "npm:@jsr/std__media-types@^1.1.0",
         "filesize": "^10.1.6",
-        "hono": "^4.6.16",
+        "hono": "^4.6.20",
         "next": "15.1.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
       },
       "devDependencies": {
         "@cloudflare/next-on-pages": "^1.13.7",
-        "@cloudflare/workers-types": "^4.20250109.0",
-        "@types/node": "^20.17.12",
-        "@types/react": "^19.0.4",
-        "@types/react-dom": "^19.0.2",
+        "@cloudflare/workers-types": "^4.20250204.0",
+        "@types/node": "^20.17.17",
+        "@types/react": "^19.0.8",
+        "@types/react-dom": "^19.0.3",
         "typescript": "^5.7.3",
-        "wrangler": "^3.101.0",
+        "wrangler": "^3.107.3",
       },
     },
   },
@@ -453,7 +453,7 @@
 
     "graceful-fs": ["graceful-fs@4.2.11", "", {}, "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="],
 
-    "hono": ["hono@4.6.20", "", {}, "sha512-5qfNQeaIptMaJKyoJ6N/q4gIq0DBp2FCRaLNuUI3LlJKL4S37DY/rLL1uAxA4wrPB39tJ3s+f7kgI79O4ScSug=="],
+    "hono": ["hono@4.7.0", "", {}, "sha512-hV97aIR4WYbG30k234sD9B3VNr1ZWdQRmrVF76LKFlmI7O9Yo70mG9+mFwyQ6Sjrz4wH71GfnBxv6CPjcx3QNw=="],
 
     "http-errors": ["http-errors@1.4.0", "", { "dependencies": { "inherits": "2.0.1", "statuses": ">= 1.2.1 < 2" } }, "sha512-oLjPqve1tuOl5aRhv8GK5eHpqP1C9fb+Ol+XTLjKfLltE44zdDbEdjPSbU7Ch5rSNsVFqZn97SrMmZLdu1/YMw=="],
 
